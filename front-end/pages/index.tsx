@@ -5,6 +5,8 @@ import { ethers } from "ethers";
 import { useState } from "react";
 import Greeting from "./Greeting";
 import CommitForm from "./CommitForm";
+import MetamaskConnect from "./MetamaskConnect";
+import { connect } from "http2";
 
 export default function Home() {
 
@@ -27,10 +29,11 @@ export default function Home() {
         <title>Commitment</title>
       </Head>
       <main className="grid place-items-center">
-        <button onClick={connectMetamask} className="bg-sky-500	rounded-full py-1 px-3 text-white">
-            Connect to Metamask
-        </button>
-        <Greeting connected={connected} address={address} test="test" />
+        <MetamaskConnect connected={connected} toConnect={connectMetamask} />
+        <Greeting
+          connected={connected}
+          address={address} 
+        />
         <div>
          <CommitForm connected={connected} />
         </div>
