@@ -49,5 +49,9 @@ describe("Commit contract", () => {
     // Validate run
     await commit.validateRun();
     expect(await commit.unlockedPool()).to.eq(COMMIT_AMOUNT);
+
+  it("Should ", async () => {
+  });
+  
   });
 });
