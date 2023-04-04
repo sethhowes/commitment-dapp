@@ -1,57 +1,78 @@
+import { expect } from 'chai';
+import { ethers } from 'hardhat';
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { ethers } from "hardhat";
-import { expect } from "chai";
-import { Commit, Commit__factory } from "../typechain-types";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
+
+// Get UNIX time in seconds
+const COMMIT_DATE = new Date(2023, 0, 30).getTime() / 1000;
+const COMMIT_AMOUNT = ethers.utils.parseUnits("1", "gwei");
 
 describe("Commit contract", () => {
-  const TWO_DAYS_IN_FUTURE = Date.now() + 60 * 60 * 24 * 2;
-  const COMMIT_AMOUNT = ethers.utils.parseEther("1.0");
+    // Create fixture where contract is deployed
+    async function deployCommitNoOracle() {
+        const CommitNoOracle = await ethers.getContractFactory("CommitNoOracle");
+        const commitNoOracle = await CommitNoOracle.deploy();
+        await commitNoOracle.deployed();
+        return commitNoOracle;
+    }
 
-  async function deployCommitFixture() {
-    const Commit = await ethers.getContractFactory("Commit");
-    // Deploys contract
-    const commit = await Commit.deploy();
-    await commit.deployed();
-    return commit;
-  }
+    it("Should set the value of the owner variable to the deployer", async () => {
+        const commitNoOracle = await loadFixture(deployCommitNoOracle);
+        const deployer = await ethers.getSigners();
+        const contractOwner = await commitNoOracle.owner();
+        expect(contractOwner).to.eq(deployer[0].address);
+    });
+    describe("Commit function", () => {
+        it("Should update the balance of the contract to the amount specified in commit", async () => {
+            const commit = await loadFixture(deployCommitNoOracle);
+            await commit.commit(COMMIT_DATE, { value: COMMIT_AMOUNT });
+            const contractBalance = await ethers.provider.getBalance(commit.address);
+            expect(contractBalance).to.eq(COMMIT_AMOUNT);
+        });
+    
+        it("Should set complete by in runs array to date specified in call", async () => {
+            const commit = await loadFixture(deployCommitNoOracle);
+            await commit.commit(COMMIT_DATE, { value: COMMIT_AMOUNT });
+            const runsCommitted = await commit.runsCommitted();
+            const latestRun = await commit.Runs(runsCommitted.sub(1));
+            expect(latestRun.completeBy).to.eq(COMMIT_DATE);
+        });
+    });
+    describe("Withdraw function", () => {
 
-  it("Should deploy the contract successfully", async () => {
-    const commit = await loadFixture(deployCommitFixture);
-    // Checks if contract has been deployed at an address
-    expect(commit.address).to.not.eq(0);
-  });
+        it("Should revert if withdraw is called before time specified in completeBy", async () => {
+            const commit = await loadFixture(deployCommitNoOracle);
+            await commit.commit(COMMIT_DATE, { value: COMMIT_AMOUNT });
+            const runsCommitted = await commit.runsCommitted();
+            const latestRun = await commit.Runs(runsCommitted.sub(1));
+            await expect(commit.withdraw()).to.be.revertedWith("Commit time is in the future");
+        });
+    
+        it("Should withdraw the last commit amount if the committed run was completed", async () => {
+            const commit = await loadFixture(deployCommitNoOracle);
+            await commit.commit(COMMIT_DATE, { value: COMMIT_AMOUNT });
+            // Mine a new block with timestamp one second ahead of COMMIT TIME
+            await time.increaseTo(COMMIT_DATE + 1);
+            // Call withdraw
+            await expect(commit.withdraw()).to.not.be.reverted;
+        });
 
-  it("Should lock up funds when a user commits to a run", async () => {
-    const commit = await loadFixture(deployCommitFixture);
-    // Call runCommit function
-    await commit.runCommit(TWO_DAYS_IN_FUTURE, { value: COMMIT_AMOUNT });
-    // Check balance
-    const lockedAmount = await commit.lockedPool();
-    expect(lockedAmount).to.eq(COMMIT_AMOUNT);
-  });
-
-  it("Should check if locked funds and smart contract balance are equal", async () => {
-    // Load commit contract
-    const commit = await loadFixture(deployCommitFixture);
-    // Commit one Ether
-    await commit.runCommit(TWO_DAYS_IN_FUTURE, { value: COMMIT_AMOUNT });
-    // Get contract balance
-    const balance = await ethers.provider.getBalance(commit.address);
-
-    expect(balance).to.eq(await commit.lockedPool());
-  });
-
-  it("Should transfer locked funds to unlocked pool if run completed", async () => {
-    // Load commit contract
-    const commit = await loadFixture(deployCommitFixture);
-    // Commit one Ether
-    await commit.runCommit(TWO_DAYS_IN_FUTURE, { value: COMMIT_AMOUNT });
-    // Validate run
-    await commit.validateRun();
-    expect(await commit.unlockedPool()).to.eq(COMMIT_AMOUNT);
-
-  it("Should ", async () => {
-  });
-  
-  });
-});
+        it("Should update the balance of the owner when withdraw is called by commit amount", async () => {
+            const commit = await loadFixture(deployCommitNoOracle);
+            await commit.commit(COMMIT_DATE, { value: COMMIT_AMOUNT });
+            // Mine a new block with timestamp one second ahead of COMMIT TIME
+            await time.increaseTo(COMMIT_DATE + 1);
+            // Check account balance of owner before withdraw is called
+            const [deployer] = await ethers.getSigners();
+            const balanceBefore = await ethers.provider.getBalance(deployer.address);
+            // Call withdraw
+            const tx = await commit.withdraw();
+            // Check gas cost
+            const txDetails = await tx.wait();
+            const gasSpent = txDetails.effectiveGasPrice.mul(txDetails.cumulativeGasUsed);
+            // Check balance after
+            const balanceAfter = await ethers.provider.getBalance(deployer.address);
+            expect(balanceBefore).to.eq(balanceAfter.sub(COMMIT_AMOUNT).add(gasSpent))
+        });
+    });
+})

@@ -7,8 +7,8 @@ const config: HardhatUserConfig = {
   solidity: "0.8.17",
   networks: {
     goerli: {
-      url: "https://goerli.infura.io/v3/1b3444ad206a44bb9fef6ab15c04f2ce",
-      accounts: ["09725b94bd03edc5ede75d4085066a584a9ec3f9348ba70066d77e3a4a7ae063"]
+      url: "https://eth-goerli.g.alchemy.com/v2/7hyt7IHEHeEpFeldgUYsoB_9M3fNH2R4",
+      accounts: ["cf2942f0c2ddae05d1aa2dd6e7988f031decc33d5079726df01f354413ee8974"]
     }
   }
 };

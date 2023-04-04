@@ -1,23 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0
-
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract Commit is ChainlinkClient, ConfirmedOwner {
 
+contract Commit is ChainlinkClient, ConfirmedOwner {
+    
     using Chainlink for Chainlink.Request;
 
-    uint public lockedPool;
-    uint public unlockedPool;
-    uint public latestCommitAmount;
-    uint public completeBy;
-    bool public runComplete;
     bytes32 private jobId;
     uint256 private fee;
 
-    event RequestComplete(bytes32 indexed requestId, bool runComplete);
+    struct Run {
+        uint commitAmount;
+        uint completeBy;
+        bool completed;
+        bool checked;
+    }
+
+    Run[] public Runs;
+    uint public runsCommitted = 0;
+    bool public currentCommit = false;
+
 
     constructor() ConfirmedOwner(msg.sender) {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
@@ -26,15 +31,17 @@ contract Commit is ChainlinkClient, ConfirmedOwner {
         fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
     }
 
+    // Constructs a request for Oracle
     function requestCompleteData() public returns (bytes32 requestId) {
         Chainlink.Request memory req = buildChainlinkRequest(
             jobId,
             address(this),
             this.fulfill.selector
         );
+
         req.add(
             "get",
-            "https://4imlkpazxh.execute-api.us-east-1.amazonaws.com/default/testValidate"
+            "https://nemyoxf5dl.execute-api.us-east-1.amazonaws.com/default/runCheckerNEW"
         );
 
         req.add(
@@ -44,53 +51,73 @@ contract Commit is ChainlinkClient, ConfirmedOwner {
         
         return sendChainlinkRequest(req, fee);
     }
-
-    function fulfill(
+    
+    // Callback function upon fulfillment of request
+    function fulfill (
         bytes32 _requestId,
         bool _runComplete
     ) public recordChainlinkFulfillment(_requestId) {
         emit RequestComplete(_requestId, _runComplete);
-        runComplete = _runComplete;
+        // Records whether the run is completed or not
+        Runs[runsCommitted - 1].completed = _runComplete;
+        // Marks a run as having been checked
+        Runs[runsCommitted - 1].checked = true;
     }
 
+
+
+    // Emits when someone commits to a run
+    event CommitMade(bool);
+    event RequestComplete(bytes32 indexed requestId, bool runComplete);
+
+    // Commit crypto to complete any run by a certain time
+    function commit(uint _completeBy) public payable onlyOwner {
+        // Check if commit time is in the future
+        require(_completeBy > block.timestamp, "Must specify a time in the future");
+        // Add run to runs struct
+        Runs.push(Run({commitAmount: msg.value, completeBy: _completeBy, completed: false, checked: false}));
+        // Increment number of runs committed;
+        runsCommitted ++;
+        // Emit CommitMade event
+        emit CommitMade(true);
+    }
+
+    // Verify last last run
+    function verify() public onlyOwner {
+        // Get details of last run
+        Run memory lastRun = Runs[runsCommitted - 1];
+        // Check if latest run is before current timestamp
+        require(lastRun.completeBy < block.timestamp, "Commit time is in the future");
+        // Check if run has already been checked
+        require(lastRun.checked == false, "Run has already been checked");
+        // Check if run was completed, and transfer funds to owner if true
+        requestCompleteData();
+    }
+
+    // Get total unlocked funds from last run
+    function getUnlockedAmount() view public onlyOwner returns (uint) {
+        uint runsLength = Runs.length;
+        uint unlockedAmount = 0;
+        for (uint i = 0; i < runsLength; i++) {
+            if (Runs[i].completed == true) {
+                unlockedAmount += Runs[i].commitAmount;
+            }
+        }
+        return unlockedAmount;
+    }
+
+    // Allow users to withdraw unlocked funds
+    function withdraw() public onlyOwner {
+        uint unlockedAmount = getUnlockedAmount();
+        payable(msg.sender).transfer(unlockedAmount);
+    }
+
+    // Allows Link to be withdrawn from contract
     function withdrawLink() public onlyOwner {
         LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
         require(
             link.transfer(msg.sender, link.balanceOf(address(this))),
             "Unable to transfer"
         );
-    }
-
-
-    function runCommit(uint completeIn) public payable {
-        // Check completion date is after current date
-        require(completeIn > block.timestamp, "Must specify a time in the future");
-        // Add money to locked pool
-        lockedPool += msg.value;
-        // Set complete day
-        completeBy = block.timestamp + completeIn;
-        // Update lastest commit amout
-        latestCommitAmount = msg.value;
-    }
-
-    function validateRun() public onlyOwner {
-        // Only owner can access these funds
-        // Checks if run was complete
-        if (checkCompletion()) {
-            // Moves money from locked pool to unlocked pool if completed
-            unlockedPool += latestCommitAmount;
-            lockedPool -= latestCommitAmount;
-        }
-    }
-
-    // Test run completion function
-    function checkCompletion() private pure returns (bool) {
-        return true;
-    }
-
-    // Withdraw unlocked funds
-    function withdraw() public onlyOwner {
-        payable(msg.sender).transfer(address(this).balance);
-        unlockedPool = 0;
     }
 }

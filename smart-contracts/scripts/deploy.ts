@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-import { Commit__factory } from "../typechain-types";
 
 async function main() {
   // Get contract factory
