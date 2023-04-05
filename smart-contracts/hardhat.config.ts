@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
   networks: {
     goerli: {
       url: "https://eth-goerli.g.alchemy.com/v2/7hyt7IHEHeEpFeldgUYsoB_9M3fNH2R4",
-      accounts: ["cf2942f0c2ddae05d1aa2dd6e7988f031decc33d5079726df01f354413ee8974"]
+      accounts: [process.env.PRIVATE_KEY]
     }
   }
 };
