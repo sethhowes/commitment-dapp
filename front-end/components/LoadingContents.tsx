@@ -5,7 +5,7 @@ interface LoadingContentsProps {
 export default function LoadingContents({ loading }:LoadingContentsProps) {
   return loading ? (
     <>
-      <div className="flex items-center">
+      <div className="flex justify-center">
         <svg
           className="animate-spin h-5 w-5 text-white"
           xmlns="http://www.w3.org/2000/svg"

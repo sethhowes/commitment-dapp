@@ -1,23 +1,24 @@
 import { useState } from "react";
-import { slideToDate } from "../utils/slideToDate";
+import { addHoursToNow } from "../utils/addHoursToNow";
 import parseCommitVals from "../utils/parseCommitVals";
 import contract from "../utils/contract";
 import { useSigner } from "wagmi";
 import { Signer } from "ethers";
 import LoadingContents from "./LoadingContents";
 
-export default function CommitForm() {
+export default function CommitForm({ onSuccess }) {
   const [amountCommitted, setAmountCommitted] = useState("");
-  const [commitDate, setCommitDate] = useState("");
-  const [slideVal, setSlideVal] = useState("");
+  const [commitDate, setCommitDate] = useState(addHoursToNow("24"));
+  const [slideVal, setSlideVal] = useState(addHoursToNow("24"));
   const [loading, setLoading] = useState(false);
 
   const { data: signer } = useSigner();
   // Event handler for changing slide
   const onSlideChange = function (value: string) {
-    const commitTime = slideToDate(value);
+    const commitTime = addHoursToNow(value);
     setCommitDate(commitTime);
     setSlideVal(value);
+    console.log(commitDate)
   };
 
   // Event handler for when submit is clicked
@@ -28,10 +29,13 @@ export default function CommitForm() {
       slideVal,
       amountCommitted
     );
+    console.log("Commit date: ", commitDate)
+    console.log("Commit amount: ", amount);
     const contractWithSigner = contract.connect(signer as Signer);
-    const tx = await contractWithSigner.commit(commitDate, { value: amount });
+    const tx = await contractWithSigner.commitRun(commitDate, { value: amount });
     await tx.wait();
     setLoading(false);
+    onSuccess();
   };
 
   return (
@@ -57,6 +61,7 @@ export default function CommitForm() {
           step="0.5"
           name="commitDate"
           id="commitDate"
+          value={slideVal}
           onChange={(e) => {
             onSlideChange(e.target.value);
           }}

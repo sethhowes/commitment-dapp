@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 
 async function main() {
   // Get contract factory
-  const Commit = await ethers.getContractFactory("Commit");
+  const Commit = await ethers.getContractFactory("CommitSingle");
   // Deploys contract
   const commit = await Commit.deploy();
   // Wait until contract is deployed

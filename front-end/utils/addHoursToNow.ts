@@ -1,4 +1,4 @@
-export function slideToDate(value: string): string {
+export function addHoursToNow(value: string): string {
   const currentDate = new Date();
   currentDate.setHours(currentDate.getHours() + Number(value));
   currentDate.setMinutes(0);
