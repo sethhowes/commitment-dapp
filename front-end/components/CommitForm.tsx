@@ -5,6 +5,7 @@ import contract from "../utils/contract";
 import { useSigner } from "wagmi";
 import { Signer } from "ethers";
 import LoadingContents from "./LoadingContents";
+import CommitButton from "./CommitButton";
 
 export default function CommitForm({ onSuccess }) {
   const [amountCommitted, setAmountCommitted] = useState("");
@@ -18,7 +19,7 @@ export default function CommitForm({ onSuccess }) {
     const commitTime = addHoursToNow(value);
     setCommitDate(commitTime);
     setSlideVal(value);
-    console.log(commitDate)
+    console.log(commitDate);
   };
 
   // Event handler for when submit is clicked
@@ -29,10 +30,12 @@ export default function CommitForm({ onSuccess }) {
       slideVal,
       amountCommitted
     );
-    console.log("Commit date: ", commitDate)
+    console.log("Commit date: ", commitDate);
     console.log("Commit amount: ", amount);
     const contractWithSigner = contract.connect(signer as Signer);
-    const tx = await contractWithSigner.commitRun(commitDate, { value: amount });
+    const tx = await contractWithSigner.commitRun(commitDate, {
+      value: amount,
+    });
     await tx.wait();
     setLoading(false);
     onSuccess();
@@ -80,6 +83,7 @@ export default function CommitForm({ onSuccess }) {
         >
           <LoadingContents loading={loading} />
         </button>
+
       </form>
     </div>
   );

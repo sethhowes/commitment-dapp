@@ -23,6 +23,9 @@ contract CommitSingle is ChainlinkClient, ConfirmedOwner {
     // Array of all runs
     Run[] public Runs;
 
+    // Flag for if there is current commit
+    bool public currentCommit;
+
     constructor() ConfirmedOwner(msg.sender) {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
         setChainlinkOracle(0xCC79157eb46F5624204f47AB42b3906cAA40eaB7);
@@ -33,20 +36,6 @@ contract CommitSingle is ChainlinkClient, ConfirmedOwner {
     // Emit when Oracle contacted
     event RequestComplete(bytes32 indexed requestId, bool runComplete);
 
-    
-    // Check if run is currently committed
-    function checkCurrentCommit() public view returns (bool) {
-
-        // Loop through runs array and return true if commit date is in future
-        for (uint i = 0; i < Runs.length; i++) {
-            if (Runs[i].completeBy > block.timestamp) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     // Commit crypto to run by certain time
     function commitRun(uint _completeBy) public payable onlyOwner {
 
@@ -55,6 +44,9 @@ contract CommitSingle is ChainlinkClient, ConfirmedOwner {
 
         // Add run to runs struct
         Runs.push(Run({commitAmount: msg.value, completeBy: _completeBy, completed: false, checked: false}));
+
+        // Set current commit to true
+        currentCommit = true;
     }
 
     // Get all activate runs
@@ -65,6 +57,9 @@ contract CommitSingle is ChainlinkClient, ConfirmedOwner {
 
     // Verify last last run
     function verifyRun() public onlyOwner {
+
+        // Check if current commit
+        require(currentCommit == true, "No current commit");
 
         // Get details of specified run
         Run memory runToCheck = Runs[Runs.length - 1];
@@ -77,6 +72,9 @@ contract CommitSingle is ChainlinkClient, ConfirmedOwner {
         
         // Check if run was completed
         requestCompleteData();
+
+        // Set current commit to false
+        currentCommit = false;
     }
 
     // Get historical runs

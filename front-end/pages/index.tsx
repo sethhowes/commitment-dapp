@@ -7,10 +7,10 @@ import MainTextCommitted from "../components/MainTextCommitted";
 import StravaButton from "../components/StravaButton";
 import { useAccount } from "wagmi";
 import checkStravaConnected from "../utils/checkStravaConnected";
-import contract from "../utils/contract";
 import CommitForm from "../components/CommitForm";
 import CurrentCommitPanel from "../components/CurrentCommitPanel";
 import getLatestRunDetails from "../utils/getLatestRunDetails";
+import contract from "../utils/contract";
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState("");
@@ -25,22 +25,36 @@ export default function Home() {
   
   const { address } = useAccount();
 
+  // Set wallet address and check for current commit
   useEffect(() => {
-
     setWalletAddress(address as string);
 
-    const fetchRunDetails = async () => {
-      const latestRun = await getLatestRunDetails();
-      setCurrentCommit(!latestRun.checked);
-      setrunDetails(latestRun);
+    const fetchCurrentCommit = async () => {
+      const commitStatus = await contract.currentCommit();
+      setCurrentCommit(commitStatus);
     };
-    
-    // Gets latest run details and sets current run state variables
-    fetchRunDetails();
-    console.log(process.env.CONTRACT_ADDRESS)
 
+    fetchCurrentCommit();
   }, []);
 
+  // Fetch run details if current commit exists
+  useEffect(() => {
+    const fetchRunDetails = async () => {
+      if (currentCommit) {
+        const latestRun = await getLatestRunDetails();
+        setrunDetails(latestRun);
+      } else {
+        console.log('No current commit found');
+      }
+    };
+
+    if (currentCommit !== null) {
+
+      fetchRunDetails();
+    }
+  }, [currentCommit]);
+
+  // Gets strava connected status
   useEffect(() => {
     const updateStravaConnected = async () => {
       const isConnected = await checkStravaConnected(walletAddress);

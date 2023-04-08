@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import * as dotenv from 'dotenv';
 
 // Create Alchemy provider
 const provider = new ethers.providers.WebSocketProvider(
@@ -149,19 +150,6 @@ const abi = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "checkCurrentCommit",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -172,6 +160,19 @@ const abi = [
     "name": "commitRun",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentCommit",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

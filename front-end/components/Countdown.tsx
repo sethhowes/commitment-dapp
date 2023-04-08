@@ -5,14 +5,16 @@ import { Signer } from "ethers";
 
 export default function Countdown({ completeBy }: { completeBy: string }) {
   const calculateTimeLeft = () => {
-    const difference = new Date(completeBy).getTime() - new Date().getTime();
+    // Get difference between committed time and current time
+    const difference = new Date(completeBy).getTime() * 1000 - new Date().getTime();
+    console.log('Time left: ', difference)
     return difference > 0 ? difference : 0;
   };
+  
   const { data: signer } = useSigner();
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   
   useEffect(() => {
-      console.log(signer?.getAddress())
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -22,13 +24,11 @@ export default function Countdown({ completeBy }: { completeBy: string }) {
     }
 
     return () => clearInterval(timer);
-  }, []);
+
+  }, [timeLeft]);
 
     // Event handler for when verify is clicked
-    const onVerifyClicked = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const status = await verifyRun(signer as Signer);
-      };
+   
 
   const formatTime = (milliseconds: number) => {
     const seconds = Math.floor((milliseconds / 1000) % 60);
