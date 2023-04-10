@@ -12,7 +12,7 @@ export default async function handler(
 
   if (req.method == "GET") {
     const url = req.url;
-    const parsedUrl = parse(url, true);
+    const parsedUrl = parse(url as string, true);
     const exchangeToken = parsedUrl.query.code;
     const scope = parsedUrl.query.scope;
     const accountAddress = parsedUrl.query.state;
