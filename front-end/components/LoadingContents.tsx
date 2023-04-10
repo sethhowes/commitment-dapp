@@ -1,8 +1,9 @@
 interface LoadingContentsProps {
-  loading: boolean;
+  loading: boolean,
+  buttonText: string,
 }
 
-export default function LoadingContents({ loading }:LoadingContentsProps) {
+export default function LoadingContents({ loading, buttonText }:LoadingContentsProps) {
   return loading ? (
     <>
       <div className="flex justify-center">
@@ -31,7 +32,7 @@ export default function LoadingContents({ loading }:LoadingContentsProps) {
     </>
   ) : (
     <>
-      Commit
+      {buttonText}
     </>
   );
 }

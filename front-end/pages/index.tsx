@@ -87,6 +87,7 @@ export default function Home() {
               <CurrentCommitPanel
                 completeBy={runDetails.completeBy}
                 commitAmount={runDetails.commitAmount}
+                onUpdateParentState={() => {setCurrentCommit(false)}}
               />
             ) : (
               <CommitForm onSuccess={() => setCurrentCommit(true)}/>

@@ -4,10 +4,10 @@ import contract from "./contract";
 export default async function verifyRun(signer: Signer) {
     const contractWithSigner = contract.connect(signer);
     try {
-      const tx = await contractWithSigner.verify();
-      return "Run was successfully verified!";
+      const tx = await contractWithSigner.verifyRun();
+      tx.wait();
+      console.log("Run verified!");
     } catch (err) {
-      console.log(err)
-      return "Uh oh 😳. " + err.reason.split(":")[1];
-    }
+      console.log(err);
   }
+}
