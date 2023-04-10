@@ -6,7 +6,7 @@ import { useSigner } from "wagmi";
 import { Signer } from "ethers";
 import LoadingContents from "./LoadingContents";
 
-export default function CommitForm({ onSuccess }) {
+export default function CommitForm({ onSuccess }: { onSuccess: () => void }) {
   const [amountCommitted, setAmountCommitted] = useState("");
   const [commitDate, setCommitDate] = useState(addHoursToNow("24"));
   const [slideVal, setSlideVal] = useState(addHoursToNow("24"));
