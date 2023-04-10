@@ -11,7 +11,7 @@ import type { AppProps } from "next/app";
 
 const { chains, provider } = configureChains(
   [mainnet, sepolia],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
+  [alchemyProvider({ apiKey: (process.env.ALCHEMY_ID as string) }), publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
