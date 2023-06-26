@@ -17,13 +17,14 @@ const VerifyResultModal = ({
     onUpdateParentState();
   }
 
-  if (!show) {
-    return null;
-  }
+  // if (!show) {
+  //   return null;
+  // }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center">
       <div className="bg-white p-10 rounded-lg">
+        Verification pending. This can take up to a minute...
         {completed ? (
           <h2 className="text-3xl font-semibold mb-4">🏆 Run completed!</h2>
         ) : (
