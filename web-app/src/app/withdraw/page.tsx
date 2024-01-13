@@ -27,7 +27,7 @@ export default function Page() {
     <div className="flex flex-col gap-2">
       <Heading>Withdraw</Heading>
       <div className="bg-white rounded-lg w-48 p-6">
-        <span className="text-3xl text-black">{formatEther(unlockedData)} </span>
+        <span className="text-3xl text-black">{formatEther(unlockedData as bigint)} </span>
         <span className="text-lg text-gray-500">{balanceData?.symbol}</span>
       </div>
       <Button
