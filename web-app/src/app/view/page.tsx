@@ -5,6 +5,7 @@ import { abi } from "@/app/lib/abi"
 import { CONTRACT_ADDRESS } from "@/app/lib/constants"
 import RunTable from "@/app/ui/view/run-table"
 import NoRuns from "@/app/ui/view/no-runs"
+import { RawRunData } from "../lib/definitions"
 
 export default function Page() {
 
@@ -13,10 +14,9 @@ export default function Page() {
     abi: abi,
     functionName: 'getAllRuns',
   })
-  console.log(runs)
 
-    // Render loading state
-    if (isLoading) return <p>Loading...</p>
+  // Render loading state
+  if (isLoading) return <p>Loading...</p>
 
     // Render error state
     if (isError) {
@@ -28,9 +28,9 @@ export default function Page() {
       return <p>Error: {error?.message}</p>
     }
 
-  return (
-    <>
-      <RunTable runs={runs}/>
-    </>
-  )
+    return (
+      <>
+        <RunTable runs={runs as RawRunData[]}/>
+      </>
+    )
 }
