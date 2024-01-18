@@ -12,21 +12,15 @@ import {
   ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import {
-  mainnet,
-  optimism,
-  polygon,
-  sepolia,
-  polygonMumbai
-} from "wagmi/chains";
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { polygon, sepolia, polygonMumbai } from "wagmi/chains";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    mainnet,
     polygon,
-    optimism,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia, polygonMumbai] : []),
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
+      ? [sepolia, polygonMumbai]
+      : []),
   ],
   [alchemyProvider({ apiKey: "jde-yWnKsYiKXFzvYglgyUHFq_CydqOV" })]
 );

@@ -44,18 +44,20 @@ export default function RunTable({ runs }: { runs: RawRunData[] }) {
   });
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Run ID</th>
-          <th>Commit Start</th>
-          <th>Commit End</th>
-          <th>Commit Amount</th>
-          <th>Completed</th>
-          <th>Checked</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
+    <div className="flex flex-col">
+      <table>
+        <thead>
+          <tr>
+            <th>Run ID</th>
+            <th>Commit Start</th>
+            <th>Commit End</th>
+            <th>Commit Amount</th>
+            <th>Completed</th>
+            <th>Checked</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
   );
 }
