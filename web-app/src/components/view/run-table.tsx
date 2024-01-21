@@ -1,9 +1,9 @@
-import { CONTRACT_ADDRESS } from "@/app/lib/constants";
-import { RawRunData } from "@/app/lib/definitions";
-import { formatRunData } from "@/app/lib/utils";
-import Button from "@/app/ui/button";
+import { CONTRACT_ADDRESS } from "@/lib/constants";
+import { RawRunData } from "@/lib/definitions";
+import { formatRunData } from "@/lib/utils";
+import Button from "@/components/button";
 import { useContractWrite, usePrepareContractWrite } from "wagmi";
-import { abi } from "@/app/lib/abi";
+import { abi } from "@/lib/abi";
 
 export default function RunTable({ runs }: { runs: RawRunData[] }) {
   const { error, isError, write } = useContractWrite({

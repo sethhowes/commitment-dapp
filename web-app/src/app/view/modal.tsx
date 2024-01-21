@@ -1,22 +1,12 @@
-export default function Modal({ show, onClose, children }) {
-    if (!show) {
-        return null;
-    }
-
-    return (
-        <div className="fixed text-black inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                <div className="mt-3 text-center">
-                    {children}
-                </div>
-            <button 
-                id="ok-btn"
-                className="absolute -right-4 -top-4 px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-full shadow-sm hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                onClick={onClose}
-            >
-                X
-            </button>
-            </div>
-        </div>
-    );
-};
+export default function Modal({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="fixed text-black backdrop-blur-sm bg-white/30 inset-0 overflow-y-auto h-full w-full"
+      id="my-modal"
+    >
+      <div className="relative top-40 mx-auto p-5 border w-1/2 h-1/2 shadow-lg rounded-xl bg-white flex justify-center items-center">
+        <div className="mt-3 flex flex-col gap-y-20">{children}</div>
+      </div>
+    </div>
+  );
+}

@@ -1,8 +1,8 @@
-import Button from "@/app/ui/button";
+import Button from "@/components/button";
 import { usePrepareContractWrite, useContractWrite, useAccount } from "wagmi";
-import { abi } from "@/app/lib/abi";
+import { abi } from "@/lib/abi";
 import { parseEther } from "viem";
-import { CONTRACT_ADDRESS } from "@/app/lib/constants";
+import { CONTRACT_ADDRESS } from "@/lib/constants";
 
 export default function CommitButton() {
   const { isConnected, address } = useAccount();

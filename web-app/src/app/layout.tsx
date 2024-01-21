@@ -1,12 +1,11 @@
-import { Inter } from "next/font/google";
-import SideNav from "./ui/sidenav";
+import { Lato } from "next/font/google";
 import { Metadata } from "next";
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import NavBar from "@/components/nav-bar";
 
-const inter = Inter({ subsets: ["latin"] });
+const lato = Lato({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Dopa",
@@ -20,19 +19,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${lato.className} antialiased`}>
         <Providers>
-          <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-            <div className="w-full flex-none md:w-64">
-              <SideNav />
-            </div>
-            <div className=" flex flex-col flex-grow p-4 md:overflow-y-auto md:p-10">
-              <div className="flex justify-end items-center">
-                <ConnectButton />
-              </div>
-              <hr className="mt-10"></hr>
-              {children}
-            </div>
+          <div className="w-screen h-screen fixed bg-blue-300">
+            <NavBar />
+            <main>{children}</main>
           </div>
         </Providers>
       </body>

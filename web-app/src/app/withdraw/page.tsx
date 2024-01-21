@@ -1,10 +1,10 @@
 "use client";
 
-import Heading from "@/app/ui/heading";
+import Heading from "@/components/heading";
 import { useBalance, useContractRead, useContractWrite } from "wagmi";
-import { abi } from "@/app/lib/abi";
-import { CONTRACT_ADDRESS } from "@/app/lib/constants";
-import Button from "@/app/ui/button";
+import { abi } from "@/lib/abi";
+import { CONTRACT_ADDRESS } from "@/lib/constants";
+import Button from "@/components/button";
 import { formatEther } from "viem";
 
 export default function Page() {

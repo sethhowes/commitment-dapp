@@ -1,4 +1,4 @@
-import { RawRunData, FormattedRunData } from '@/app/lib/definitions'
+import { RawRunData, FormattedRunData } from '@/lib/definitions'
 import { formatEther } from 'viem';
 
 export function setToTomorrow() {

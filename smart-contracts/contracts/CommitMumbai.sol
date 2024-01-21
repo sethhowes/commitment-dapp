@@ -24,6 +24,9 @@ contract CommitMumbai is ChainlinkClient, ConfirmedOwner {
     // Array of all runs
     Run[] public Runs;
 
+    // Unlocked amount
+    uint public unlockedAmount;
+
     constructor() ConfirmedOwner(msg.sender) {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
         setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
@@ -34,7 +37,7 @@ contract CommitMumbai is ChainlinkClient, ConfirmedOwner {
     // Emit when Oracle contacted
     event RequestComplete(bytes32 indexed requestId, bool runComplete);
 
-    // Commit crypto to run by certain time
+    // Commit to run by certain time
     function commitRun(
         uint _startTime,
         uint _endTime
@@ -119,20 +122,13 @@ contract CommitMumbai is ChainlinkClient, ConfirmedOwner {
 
     // Get total unlocked funds from last run
     function getUnlockedAmount() public view returns (uint) {
-        uint unlockedAmount = 0;
-        for (uint i = 0; i < Runs.length; i++) {
-            if (Runs[i].completed == true) {
-                unlockedAmount += Runs[i].commitAmount;
-            }
-        }
-
         return unlockedAmount;
     }
 
     // Allow users to withdraw unlocked funds
     function withdraw() public onlyOwner {
-        uint unlockedAmount = getUnlockedAmount();
         payable(msg.sender).transfer(unlockedAmount);
+        unlockedAmount = 0;
     }
 
     // Allows Link to be withdrawn from contract
@@ -178,5 +174,10 @@ contract CommitMumbai is ChainlinkClient, ConfirmedOwner {
         Runs[chainlinkRunId].completed = _runComplete;
         // Marks a run as having been checked
         Runs[chainlinkRunId].checked = true;
+
+        // If run is completed, add to unlocked amount
+        if (_runComplete == true) {
+            unlockedAmount += Runs[chainlinkRunId].commitAmount;
+        }
     }
 }
