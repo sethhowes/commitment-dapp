@@ -19,12 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${lato.className} antialiased`}>
+      <body className={`${lato.className} antialiased w-screen h-screen fixed bg-blue-300`}>
         <Providers>
-          <div className="w-screen h-screen fixed bg-blue-300">
-            <NavBar />
-            <main>{children}</main>
-          </div>
+          <NavBar />
+          <main>{children}</main>
         </Providers>
       </body>
     </html>

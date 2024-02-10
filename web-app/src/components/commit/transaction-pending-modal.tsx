@@ -1,6 +1,6 @@
 "use client";
 
-import Modal from "@/app/view/modal";
+import Modal from "@/app/runs/modal";
 import LoadingSpinner from "@/components/loading-spinner";
 import { useWaitForTransaction } from "wagmi";
 import { useEffect } from "react";

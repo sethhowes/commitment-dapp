@@ -22,7 +22,7 @@ export default function NavLinks() {
               key={link.name}
               href={link.href}
               className={clsx("text-gray-400", {
-                "text-black font-bold": pathName === link.href,
+                "text-gray-800 text-bold": pathName === link.href,
               })}
             >
               {link.name}
