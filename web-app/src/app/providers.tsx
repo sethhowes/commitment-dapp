@@ -61,7 +61,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   React.useEffect(() => setMounted(true), []);
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} appInfo={demoAppInfo}>
+      <RainbowKitProvider
+        chains={chains}
+        appInfo={demoAppInfo}
+      >
         {mounted && children}
       </RainbowKitProvider>
     </WagmiConfig>
