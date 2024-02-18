@@ -1,21 +1,4 @@
-const new_access_token_payload = {
-  client_id: 83375,
-  client_secret: '738f6dd8e44e7e614fd22b96b4abf8acf85a9659',
-  grant_type: 'refresh_token',
-  refresh_token: secrets.REFRESH_TOKEN,
-};
-
-const tokenData = await Functions.makeHttpRequest({
-  method: 'POST',
-  url: 'https://www.strava.com/oauth/token',
-  data: new_access_token_payload
-});
-
-
-
-return Functions.encodeString(tokenData['data']['access_token']);
-
-// const accessToken = tokenData['data']['access_token'];
+const accessToken = secrets.ACCESS_TOKEN;
 
 const strava_activity_url = 'https://www.strava.com/api/v3/athlete/activities';
 

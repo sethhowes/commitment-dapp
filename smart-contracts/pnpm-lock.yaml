@@ -23,6 +23,9 @@ dependencies:
   ts-node:
     specifier: ^10.9.1
     version: 10.9.2(@types/node@20.11.17)(typescript@5.3.3)
+  utils:
+    specifier: link:@openzeppelin/contracts/utils
+    version: link:@openzeppelin/contracts/utils
 
 devDependencies:
   '@nomicfoundation/hardhat-network-helpers':
