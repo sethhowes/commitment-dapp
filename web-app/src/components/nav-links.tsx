@@ -17,9 +17,8 @@ export default function NavLinks() {
     <>
       {links.map((link) => {
         return (
-          <p>
+          <p key={link.name}> {/* Added key prop */}
             <Link
-              key={link.name}
               href={link.href}
               className={clsx("text-gray-400", {
                 "text-gray-800 text-bold": pathName === link.href,
