@@ -14,7 +14,7 @@ export default function RunDisplay({ runs }: { runs: RawRunData[] }) {
 
   const runCards = runs.map((run, index) => {
     const formattedRun = formatRunData(run);
-    return <RunCard formattedRun={formattedRun} index={index} inInterval={isIntervalPassed(run)} />;
+    return <RunCard key={index} formattedRun={formattedRun} index={index} inInterval={isIntervalPassed(run)} />;
   });
   
   return <div className="flex m-10">{runCards}</div>;
