@@ -3,10 +3,9 @@
 import { useContractRead } from "wagmi";
 import { abi } from "@/lib/abi";
 import { CONTRACT_ADDRESS } from "@/lib/constants";
-import RunTable from "@/components/runs/run-table";
+import RunDisplay from "@/components/runs/run-display";
 import NoRuns from "@/components/runs/no-runs";
-import { RawRunData } from "../../lib/definitions";
-import RunCard from "@/components/runs/run-card";
+import { RawRunData } from "@/lib/definitions";
 
 export default function Page() {
   const {
@@ -35,8 +34,7 @@ export default function Page() {
 
   return (
     <>
-      <RunTable runs={runs as RawRunData[]} />
-      <RunCard />
+      <RunDisplay runs={runs as RawRunData[]} />
     </>
   );
 }

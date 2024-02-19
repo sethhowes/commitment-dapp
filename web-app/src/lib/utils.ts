@@ -43,3 +43,7 @@ export function formatRunData(data: RawRunData): FormattedRunData {
         checked: data.checked
     }
 }
+
+export function isIntervalPassed(run: RawRunData) {
+    return run.endTime < Date.now() / 1000;
+}
