@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity ^0.8.20;
 
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 import {FunctionsRequest} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
-    
     using FunctionsRequest for FunctionsRequest.Request;
-    
+
     string public source;
     bytes32 public s_lastRequestId;
     bytes public s_lastResponse;
@@ -51,7 +50,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
      * @return requestId The ID of the request
      */
     function sendRequest(
-        string[2] memory args,
+        string[] memory args,
         uint8 donHostedSecretsSlotID,
         uint64 donHostedSecretsVersion,
         uint64 _id
@@ -63,7 +62,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
                 donHostedSecretsSlotID,
                 donHostedSecretsVersion
             );
-        if (args.length > 0) req.setArgs(args); // Set the arguments for the request
+            if (args.length > 0) req.setArgs(args); // Set the arguments for the request
         }
 
         // Send the request and store the request ID
@@ -85,7 +84,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
      * @param requestId The ID of the request to fulfill
      * @param response The HTTP response data
      * @param err Any errors from the Functions request
-    */
+     */
     function fulfillRequest(
         bytes32 requestId,
         bytes memory response,
@@ -98,11 +97,13 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         s_lastResponse = response;
         s_lastError = err;
 
+        // @complete Handle the conversion of bytes32 to string and update the run + unlocked amount if it is completed
+
         // Emit an event to log the response
         emit Response(requestId, s_lastResponse, s_lastError);
     }
 
-        // Commit to run by certain time
+    // Commit to run by certain time
     function commitRun(
         uint _startTime,
         uint _endTime
@@ -131,7 +132,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         return Runs;
     }
 
-     // Get total unlocked funds from last run
+    // Get total unlocked funds from last run
     function getUnlockedAmount() public view returns (uint) {
         return unlockedAmount;
     }
@@ -142,8 +143,11 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         unlockedAmount = 0;
     }
 
-     // Verify last last run
-    function verifyRun(uint64 _id, uint64 _donHostedSecretsVersion) public onlyOwner {
+    // Verify last last run
+    function verifyRun(
+        uint64 _id,
+        uint64 _donHostedSecretsVersion
+    ) public onlyOwner {
         // Get details of specified run
         Run memory runToCheck = Runs[_id];
 
@@ -157,12 +161,15 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         require(runToCheck.checked == false, "Run has already been checked");
 
         // Check if run was completed
-        sendRequest([Strings.toString(runToCheck.startTime), Strings.toString(runToCheck.endTime)], 0, _donHostedSecretsVersion, _id);
+        string[] memory args = new string[](2);
+        args[0] = Strings.toString(runToCheck.startTime);
+        args[1] = Strings.toString(runToCheck.endTime);
+        sendRequest(args, 0, _donHostedSecretsVersion, _id);
     }
 
     /**
-        * @notice Sets the source code for the contract
-        * @param _source The new source code
+     * @notice Sets the source code for the contract
+     * @param _source The new source code
      */
     function setSourceCode(string memory _source) public onlyOwner {
         source = _source;
