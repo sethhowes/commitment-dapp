@@ -17,6 +17,9 @@ import clsx from "clsx";
 export default function CommitForm({
   handleTransactionSubmit,
   setTransactionHash,
+}: {
+  handleTransactionSubmit: () => void;
+  setTransactionHash: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const [commitAmount, setCommitAmount] = useState("0.01");
   const [endCommitDate, setEndCommitDate] = useState(setToTomorrow());
