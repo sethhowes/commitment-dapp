@@ -12,9 +12,9 @@
     "@chainlink/contracts": "^0.8.0",
     "@chainlink/functions-toolkit": "^0.2.8",
     "@metamask/detect-provider": "^2.0.0",
+    "@openzeppelin/contracts": "^5.0.1",
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
-    "ts-node": "^10.9.1",
-    "utils": "link:@openzeppelin/contracts/utils"
+    "ts-node": "^10.9.1"
   }
 }

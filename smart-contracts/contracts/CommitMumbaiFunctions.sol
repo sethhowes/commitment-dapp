@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
 
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
@@ -28,8 +28,6 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
     Run[] public Runs;
 
     error UnexpectedRequestID(bytes32 requestId);
-
-    event Response(bytes32 indexed requestId, bytes response, bytes err);
 
     // Request params
     uint32 gasLimit = 300000;
@@ -97,11 +95,16 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         s_lastResponse = response;
         s_lastError = err;
 
-        // @complete Handle the conversion of bytes32 to string and update the run + unlocked amount if it is completed
-
-        // Emit an event to log the response
-        emit Response(requestId, s_lastResponse, s_lastError);
+        // Handle conversion of bytes32 to string + update the run and unlocked amount if completed
+        if (response.length > 0) {
+            if (keccak256(response) == keccak256(bytes("true"))) {
+                Runs[chainlinkRunId].completed = true;
+                Runs[chainlinkRunId].checked = true;
+                unlockedAmount += Runs[chainlinkRunId].commitAmount;
+            }
+        }
     }
+
 
     // Commit to run by certain time
     function commitRun(
