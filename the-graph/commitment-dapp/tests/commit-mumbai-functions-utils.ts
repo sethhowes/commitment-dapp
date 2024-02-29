@@ -1,10 +1,12 @@
 import { newMockEvent } from "matchstick-as"
-import { ethereum, Address, Bytes } from "@graphprotocol/graph-ts"
+import { ethereum, Address, Bytes, BigInt } from "@graphprotocol/graph-ts"
 import {
   OwnershipTransferRequested,
   OwnershipTransferred,
   RequestFulfilled,
-  RequestSent
+  RequestSent,
+  RunChecked,
+  RunCreated
 } from "../generated/CommitMumbaiFunctions/CommitMumbaiFunctions"
 
 export function createOwnershipTransferRequestedEvent(
@@ -69,4 +71,64 @@ export function createRequestSentEvent(id: Bytes): RequestSent {
   )
 
   return requestSentEvent
+}
+
+export function createRunCheckedEvent(
+  runId: BigInt,
+  startTime: BigInt,
+  endTime: BigInt,
+  completed: boolean
+): RunChecked {
+  let runCheckedEvent = changetype<RunChecked>(newMockEvent())
+
+  runCheckedEvent.parameters = new Array()
+
+  runCheckedEvent.parameters.push(
+    new ethereum.EventParam("runId", ethereum.Value.fromUnsignedBigInt(runId))
+  )
+  runCheckedEvent.parameters.push(
+    new ethereum.EventParam(
+      "startTime",
+      ethereum.Value.fromUnsignedBigInt(startTime)
+    )
+  )
+  runCheckedEvent.parameters.push(
+    new ethereum.EventParam(
+      "endTime",
+      ethereum.Value.fromUnsignedBigInt(endTime)
+    )
+  )
+  runCheckedEvent.parameters.push(
+    new ethereum.EventParam("completed", ethereum.Value.fromBoolean(completed))
+  )
+
+  return runCheckedEvent
+}
+
+export function createRunCreatedEvent(
+  runId: BigInt,
+  startTime: BigInt,
+  endTime: BigInt
+): RunCreated {
+  let runCreatedEvent = changetype<RunCreated>(newMockEvent())
+
+  runCreatedEvent.parameters = new Array()
+
+  runCreatedEvent.parameters.push(
+    new ethereum.EventParam("runId", ethereum.Value.fromUnsignedBigInt(runId))
+  )
+  runCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "startTime",
+      ethereum.Value.fromUnsignedBigInt(startTime)
+    )
+  )
+  runCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "endTime",
+      ethereum.Value.fromUnsignedBigInt(endTime)
+    )
+  )
+
+  return runCreatedEvent
 }

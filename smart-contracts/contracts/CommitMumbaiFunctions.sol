@@ -24,6 +24,10 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         bool checked;
     }
 
+    // Commited runs event
+    event RunCreated(uint indexed runId, uint startTime, uint endTime);
+    event RunChecked(uint indexed runId, uint startTime, uint endTime, bool completed);
+
     // Array of all runs
     Run[] public Runs;
 
@@ -102,7 +106,13 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
                 Runs[chainlinkRunId].checked = true;
                 unlockedAmount += Runs[chainlinkRunId].commitAmount;
             }
+        } else {
+            Runs[chainlinkRunId].completed = false;
+            Runs[chainlinkRunId].checked = false;
         }
+        
+        // Emit event that run was completed
+        emit RunChecked(chainlinkRunId, Runs[chainlinkRunId].startTime, Runs[chainlinkRunId].endTime, Runs[chainlinkRunId].completed);
     }
 
 
@@ -127,6 +137,9 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
                 checked: false
             })
         );
+
+        // Emit event that run was completed
+        emit RunCreated(Runs.length, _startTime, _endTime);
     }
 
     // Get all runs

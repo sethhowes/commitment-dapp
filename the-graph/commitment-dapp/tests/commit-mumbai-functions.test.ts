@@ -6,7 +6,7 @@ import {
   beforeAll,
   afterAll
 } from "matchstick-as/assembly/index"
-import { Address, Bytes } from "@graphprotocol/graph-ts"
+import { Address, Bytes, BigInt } from "@graphprotocol/graph-ts"
 import { OwnershipTransferRequested } from "../generated/schema"
 import { OwnershipTransferRequested as OwnershipTransferRequestedEvent } from "../generated/CommitMumbaiFunctions/CommitMumbaiFunctions"
 import { handleOwnershipTransferRequested } from "../src/commit-mumbai-functions"
