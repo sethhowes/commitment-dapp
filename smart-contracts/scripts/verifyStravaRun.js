@@ -1,22 +1,20 @@
 const accessToken = secrets.ACCESS_TOKEN;
 
-const strava_activity_url = 'https://www.strava.com/api/v3/athlete/activities';
+const stravaActivityUrl = 'https://www.strava.com/api/v3/athlete/activities';
 
-const start_timestamp = args[0];
-const end_timestamp = args[1];
+const completionDate = args[0];
 
-const activity_query_params = {
-  before: end_timestamp,
-  after: start_timestamp,
+const activityQueryParams = {
+  completionDate: completionDate,
   page: 1,
-  per_page: 1
+  perPage: 1
 };
 
 const headers = { Authorization: `Bearer ${accessToken}` };
 
 const apiResponse = await Functions.makeHttpRequest({
-  url: strava_activity_url,
-  params: activity_query_params,
+  url: stravaActivityUrl,
+  params: activityQueryParams,
   headers: headers
 });
 

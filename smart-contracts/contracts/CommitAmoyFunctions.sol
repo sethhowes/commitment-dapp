@@ -6,7 +6,7 @@ import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/Confir
 import {FunctionsRequest} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
+contract CommitAmoyFunctions is FunctionsClient, ConfirmedOwner {
     using FunctionsRequest for FunctionsRequest.Request;
 
     string public source;
@@ -18,15 +18,10 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
 
     struct Run {
         uint commitAmount;
-        uint startTime;
-        uint endTime;
+        uint completionDate;
         bool completed;
         bool checked;
     }
-
-    // Commited runs event
-    event RunCreated(uint indexed runId, uint startTime, uint endTime);
-    event RunChecked(uint indexed runId, uint startTime, uint endTime, bool completed);
 
     // Array of all runs
     Run[] public Runs;
@@ -36,7 +31,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
     // Request params
     uint32 gasLimit = 300000;
     bytes32 donID =
-        0x66756e2d706f6c79676f6e2d6d756d6261692d31000000000000000000000000;
+        0x66756e2d706f6c79676f6e2d616d6f792d310000000000000000000000000000;
     uint64 subscriptionId = 1336;
 
     constructor(
@@ -110,20 +105,16 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
             Runs[chainlinkRunId].completed = false;
             Runs[chainlinkRunId].checked = false;
         }
-        
-        // Emit event that run was completed
-        emit RunChecked(chainlinkRunId, Runs[chainlinkRunId].startTime, Runs[chainlinkRunId].endTime, Runs[chainlinkRunId].completed);
     }
 
 
     // Commit to run by certain time
     function commitRun(
-        uint _startTime,
-        uint _endTime
+        uint _completionDate
     ) public payable onlyOwner {
         // Check if commit time is in the future
         require(
-            _startTime > block.timestamp,
+            _completionDate > block.timestamp,
             "Must specify a time in the future"
         );
 
@@ -131,20 +122,15 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
         Runs.push(
             Run({
                 commitAmount: msg.value,
-                startTime: _startTime,
-                endTime: _endTime,
+                completionDate: _completionDate,
                 completed: false,
                 checked: false
             })
         );
-
-        // Emit event that run was completed
-        emit RunCreated(Runs.length, _startTime, _endTime);
     }
 
     // Get all runs
     function getAllRuns() public view returns (Run[] memory) {
-        require(Runs.length > 0, "No runs have been committed to");
         return Runs;
     }
 
@@ -169,7 +155,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
 
         // Check if latest run is before current timestamp
         require(
-            runToCheck.startTime < block.timestamp,
+            runToCheck.completionDate < block.timestamp,
             "Commit time is in the future"
         );
 
@@ -178,8 +164,7 @@ contract CommitMumbaiFunctions is FunctionsClient, ConfirmedOwner {
 
         // Check if run was completed
         string[] memory args = new string[](2);
-        args[0] = Strings.toString(runToCheck.startTime);
-        args[1] = Strings.toString(runToCheck.endTime);
+        args[0] = Strings.toString(runToCheck.completionDate);
         sendRequest(args, 0, _donHostedSecretsVersion, _id);
     }
 

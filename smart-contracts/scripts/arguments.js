@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const ROUTER_ADDRESS = "0x6E2dc0F9DB014aE19888F539E59285D2Ea04244C"
+const ROUTER_ADDRESS = "0xC22a79eBA640940ABB6dF0f7982cc119578E11De"
 
 // Initialize functions settings
 const source = fs

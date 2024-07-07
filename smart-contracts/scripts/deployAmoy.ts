@@ -1,10 +1,9 @@
 import { ethers } from "hardhat";
 import args from "./arguments";
 
-const source = "your source value here"; // Define the source variable
 async function main() {
   // Get contract factory
-  const CommitContractFactory = await ethers.getContractFactory("CommitMumbaiFunctions");
+  const CommitContractFactory = await ethers.getContractFactory("CommitAmoyFunctions");
   // Deploys contract
   const commit = await CommitContractFactory.deploy(args[0], args[1]);
   // Wait until contract is deployed

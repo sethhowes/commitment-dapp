@@ -6,14 +6,10 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
     solidity: "0.8.20",
-    defaultNetwork: "mumbai",
+    defaultNetwork: "amoy",
     networks: {
-        sepolia: {
-        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`,
-        accounts: [process.env.PRIVATE_KEY!]
-        },
-        mumbai: {
-        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.MUMBAI_API_KEY}`,
+        amoy: {
+        url: `${process.env.AMOY_RPC_URL}${process.env.AMOY_API_KEY}`,
         accounts: [process.env.PRIVATE_KEY!],
         },
     },
