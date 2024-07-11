@@ -12,7 +12,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 // Secrets constants
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL;
+const POLYGON_AMOY_RPC_URL = process.env.POLYGON_AMOY_RPC_URL;
 
 // Supabase constants
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -47,10 +47,10 @@ const requestNewAccessToken = async () => {
 }
 
 // Uploads the new access token to Chainlink secrets
-const uploadSecretsMumbai = async (accessToken) => {
-    // hardcoded for Polygon Mumbai
-    const routerAddress = "0x6E2dc0F9DB014aE19888F539E59285D2Ea04244C";
-    const donId = "fun-polygon-mumbai-1";
+const uploadSecretsAmoy = async (accessToken) => {
+    // hardcoded for Polygon Amoy
+    const routerAddress = "0xC22a79eBA640940ABB6dF0f7982cc119578E11De";
+    const donId = "fun-polygon-amoy-1";
     const gatewayUrls = [
       "https://01.functions-gateway.testnet.chain.link/",
       "https://02.functions-gateway.testnet.chain.link/",
@@ -67,7 +67,7 @@ const uploadSecretsMumbai = async (accessToken) => {
         "private key not provided - check your environment variables"
       );
   
-    const rpcUrl = POLYGON_MUMBAI_RPC_URL;
+    const rpcUrl = POLYGON_AMOY_RPC_URL;
   
     if (!rpcUrl)
       throw new Error(`rpcUrl not provided  - check your environment variables`);
@@ -128,7 +128,7 @@ const uploadSecretsToSupabase = async (secretsId) => {
 
 export const handler = async (event) => {
   const accessToken = await requestNewAccessToken();
-  const secretsId = await uploadSecretsMumbai(accessToken);
+  const secretsId = await uploadSecretsAmoy(accessToken);
   await uploadSecretsToSupabase(secretsId);
 
   const response = {

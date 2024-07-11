@@ -5,9 +5,10 @@ const stravaActivityUrl = 'https://www.strava.com/api/v3/athlete/activities';
 const completionDate = args[0];
 
 const activityQueryParams = {
-  completionDate: completionDate,
+  before: completionDate,
+  after: completionDate - 60*24*60,
   page: 1,
-  perPage: 1
+  per_page: 1
 };
 
 const headers = { Authorization: `Bearer ${accessToken}` };

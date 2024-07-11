@@ -32,7 +32,7 @@ contract CommitAmoyFunctions is FunctionsClient, ConfirmedOwner {
     uint32 gasLimit = 300000;
     bytes32 donID =
         0x66756e2d706f6c79676f6e2d616d6f792d310000000000000000000000000000;
-    uint64 subscriptionId = 1336;
+    uint64 subscriptionId = 322;
 
     constructor(
         address router,
